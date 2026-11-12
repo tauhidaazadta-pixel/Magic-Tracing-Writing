@@ -148,7 +148,7 @@
 
     /* --- TRACING SCREEN --- */
     #drawScreen { 
-      background: #fffdf8; /* Very light warm background for visibility */
+      background: #fffdf8;
     }
     .draw-header {
       display: flex;
@@ -182,19 +182,39 @@
       cursor: crosshair;
     }
 
-    /* Bouncing Start Arrow */
-    #startArrow {
+    /* Start Indicator (Glowing Dot + Arrow) */
+    .start-indicator {
       position: absolute;
-      font-size: 2rem;
       pointer-events: none;
-      animation: bounce 1s infinite alternate;
       z-index: 5;
       display: none;
       transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .arrow {
+      font-size: 2rem;
+      animation: bounce 0.8s infinite alternate;
+      margin-bottom: -10px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .glow-dot {
+      width: 25px;
+      height: 25px;
+      background-color: #00b894;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7);
+      animation: pulse 1.5s infinite;
     }
     @keyframes bounce {
-      from { transform: translate(-50%, -50%) translateY(0); }
-      to { transform: translate(-50%, -50%) translateY(15px); }
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7); }
+      70% { box-shadow: 0 0 0 20px rgba(0, 184, 148, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); }
     }
     
     /* --- COLOR PALETTE --- */
@@ -285,7 +305,11 @@
     </div>
     
     <div class="canvas-container" id="canvasContainer">
-      <div id="startArrow">👇</div>
+      <!-- Start Indicator -->
+      <div id="startIndicator" class="start-indicator">
+        <div class="arrow">👇</div>
+        <div class="glow-dot"></div>
+      </div>
       <canvas id="drawCanvas"></canvas>
     </div>
 
@@ -328,13 +352,13 @@
     
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
-    const startArrow = document.getElementById('startArrow');
+    const startIndicator = document.getElementById('startIndicator');
     const container = document.getElementById('canvasContainer');
     
     let isDrawing = false;
     let lastX = 0;
     let lastY = 0;
-    let cw, ch; // Canvas logical width & height
+    let cw, ch; 
     let dpr = window.devicePixelRatio || 1;
 
     /* =========================================================
@@ -353,12 +377,12 @@
     }
 
     /* =========================================================
-       3. NAVIGATION & SETUP
+       3. NAVIGATION
        ========================================================= */
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
-      startArrow.style.display = 'none';
+      startIndicator.style.display = 'none';
     }
 
     function goHome() { showScreen('homeScreen'); }
@@ -407,7 +431,6 @@
       
       showScreen('drawScreen');
       
-      // Wait for CSS layout then size canvas
       setTimeout(() => {
         resizeCanvas();
         drawGuide(item);
@@ -448,7 +471,7 @@
     }
 
     /* =========================================================
-       5. CANVAS DRAWING
+       5. CANVAS DRAWING & GUIDES
        ========================================================= */
     function resizeCanvas() {
       const rect = container.getBoundingClientRect();
@@ -509,9 +532,10 @@
       clearCanvas();
       ctx.save();
       
-      // GUIDE STYLE: VERY THICK, LIGHT COLOR, NO DOTS
-      ctx.strokeStyle = '#E5E9F0'; // Clearly visible light blue-grey
-      ctx.lineWidth = 65; // Very thick so they can trace easily
+      // GUIDE STYLE: DOTTED LINE (Bachon ke liye shuruat samajhna aasan)
+      ctx.strokeStyle = '#b2bec3'; // Clear grey color
+      ctx.lineWidth = 16; 
+      ctx.setLineDash([15, 20]); // The magic dots!
       
       const centerX = cw / 2;
       const centerY = ch / 2;
@@ -539,10 +563,10 @@
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // Draw solid thick guide text
+        // Draw dotted guide text
         ctx.strokeText(item, centerX, centerY);
         
-        // Approximate start position (top-left of the letter)
+        // Approximate start position
         startX = centerX - fontSize * 0.3;
         startY = centerY - fontSize * 0.4;
       }
@@ -552,11 +576,12 @@
       // Reset drawing styles
       ctx.strokeStyle = currentColor;
       ctx.lineWidth = 22;
+      ctx.setLineDash([]); // Remove dash for user's drawing
 
-      // Position the bouncing arrow
-      startArrow.style.display = 'block';
-      startArrow.style.left = startX + 'px';
-      startArrow.style.top = startY + 'px';
+      // Show Glowing Start Dot
+      startIndicator.style.display = 'flex';
+      startIndicator.style.left = startX + 'px';
+      startIndicator.style.top = startY + 'px';
     }
 
     function clearCanvas() {
@@ -584,13 +609,12 @@
       lastX = pos.x;
       lastY = pos.y;
       
-      // Draw initial dot
       ctx.beginPath();
       ctx.arc(lastX, lastY, 11, 0, Math.PI * 2);
       ctx.fillStyle = currentColor;
       ctx.fill();
       
-      startArrow.style.display = 'none'; // Hide arrow when they start
+      startIndicator.style.display = 'none'; // Hide dot when drawing starts
     }
 
     function draw(e) {
@@ -622,7 +646,6 @@
     canvas.addEventListener('touchend', stopDrawing, { passive: false });
     canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
 
-    // Handle orientation change / resize
     window.addEventListener('resize', () => {
       if (document.getElementById('drawScreen').classList.contains('active')) {
         resizeCanvas();
@@ -630,7 +653,6 @@
       }
     });
 
-    // Ensure fonts are loaded before drawing the first time
     if (document.fonts) {
       document.fonts.ready.then(() => {
         if (document.getElementById('drawScreen').classList.contains('active')) {
@@ -638,8 +660,6 @@
         }
       });
     }
-
-    if ("speechSynthesis" in window) speechSynthesis.getVoices();
   </script>
 </body>
 </html>

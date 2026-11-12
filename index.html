@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kids Magic Writing</title>
+  <title>Kids Magic Tracing Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f0f8ff;
-      --card: #ffffff;
+      --bg: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
       --text: #2d3436;
-      --blue: #0984e3;
-      --green: #00b894;
-      --pink: #fd79a8;
-      --purple: #6c5ce7;
-      --orange: #e17055;
+      --shadow: 0 10px 20px rgba(0,0,0,0.15);
     }
 
     * {
@@ -27,7 +22,7 @@
       margin: 0;
       min-height: 100vh;
       font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      background: var(--bg);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -41,12 +36,10 @@
       width: 100%;
       height: 100vh;
       flex-direction: column;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.4s ease;
     }
-    .screen.active {
-      display: flex;
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .screen.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
     /* --- HOME SCREEN --- */
     #homeScreen {
@@ -56,74 +49,78 @@
     }
     .title {
       font-family: 'Baloo 2', cursive;
-      font-size: 3rem;
+      font-size: 3.2rem;
       color: #fff;
-      text-shadow: 2px 2px 0 #6c5ce7, 4px 4px 0 rgba(0,0,0,0.1);
+      text-shadow: 3px 3px 0 #6c5ce7, 6px 6px 0 rgba(0,0,0,0.1);
       margin-bottom: 30px;
       text-align: center;
+      line-height: 1;
     }
     .category-grid {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 15px;
       width: 100%;
-      max-width: 350px;
+      max-width: 400px;
     }
     .cat-btn {
       border: none;
-      border-radius: 20px;
-      padding: 20px;
+      border-radius: 25px;
+      padding: 25px 15px;
       font-family: 'Baloo 2', cursive;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: #fff;
       cursor: pointer;
-      box-shadow: 0 8px 0 rgba(0,0,0,0.2);
-      transition: transform 0.1s;
+      box-shadow: 0 8px 0 rgba(0,0,0,0.2), inset 0 -4px 0 rgba(0,0,0,0.1);
+      transition: transform 0.1s, box-shadow 0.1s;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 10px;
+      gap: 8px;
     }
     .cat-btn:active { transform: translateY(8px); box-shadow: 0 0px 0 rgba(0,0,0,0.2); }
+    .cat-btn span { font-size: 2.2rem; }
+    
     .btn-abc { background: linear-gradient(to bottom, #fd79a8, #e84393); }
     .btn-123 { background: linear-gradient(to bottom, #74b9ff, #0984e3); }
     .btn-arabic { background: linear-gradient(to bottom, #55efc4, #00b894); }
+    .btn-shapes { background: linear-gradient(to bottom, #ffeaa7, #fdcb6e); color: #d35400; text-shadow: 1px 1px 0 #fff; }
 
     /* --- SELECTION SCREEN --- */
-    #selectScreen {
-      background: #f8f9fa;
-    }
+    #selectScreen { background: #f8f9fa; }
     .header {
       display: flex;
       align-items: center;
-      padding: 15px;
+      padding: 15px 20px;
       background: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
       z-index: 10;
     }
     .back-btn {
       background: #dfe6e9;
       border: none;
-      border-radius: 12px;
+      border-radius: 15px;
       padding: 10px 15px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 900;
       cursor: pointer;
       color: #2d3436;
       display: flex;
       align-items: center;
-      gap: 5px;
+      box-shadow: 0 4px 0 #b2bec3;
     }
+    .back-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #b2bec3; }
     .header-title {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.5rem;
-      margin-left: 15px;
+      font-size: 1.8rem;
+      margin-left: auto;
+      margin-right: auto;
       color: #6c5ce7;
     }
     .letter-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 15px;
       padding: 20px;
       overflow-y: auto;
       flex: 1;
@@ -132,43 +129,38 @@
     .letter-card {
       background: #fff;
       border: 3px solid #dfe6e9;
-      border-radius: 15px;
+      border-radius: 18px;
       aspect-ratio: 1;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Baloo 2', cursive;
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: #2d3436;
       cursor: pointer;
-      box-shadow: 0 4px 0 #dfe6e9;
+      box-shadow: 0 5px 0 #dfe6e9;
       transition: transform 0.1s;
     }
     .letter-card:active { transform: scale(0.95); }
-    .letter-card.arabic-char {
-      font-family: 'Amiri', serif;
-      font-size: 2.8rem;
-    }
+    .letter-card.arabic-char { font-family: 'Amiri', serif; font-size: 3rem; }
+    .letter-card.shape-char { font-size: 2.5rem; color: #e17055; }
 
     /* --- TRACING SCREEN --- */
-    #drawScreen {
-      background: #fff;
-      position: relative;
-    }
+    #drawScreen { background: #fff; position: relative; }
     .draw-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px;
+      padding: 15px 20px;
       background: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
       z-index: 10;
     }
     .draw-title {
       font-family: 'Baloo 2', cursive;
-      font-size: 1.8rem;
-      color: var(--purple);
+      font-size: 2rem;
+      color: #6c5ce7;
     }
     
     .canvas-container {
@@ -176,9 +168,9 @@
       position: relative;
       width: 100%;
       background: #fafafa;
-      /* Dot grid background */
-      background-image: radial-gradient(#d1d8e0 2px, transparent 2px);
-      background-size: 40px 40px;
+      background-image: radial-gradient(#f1f2f6 20%, transparent 20%);
+      background-position: 0 0;
+      background-size: 30px 30px;
     }
     canvas {
       position: absolute;
@@ -186,58 +178,92 @@
       left: 0;
       width: 100%;
       height: 100%;
-      touch-action: none; /* Prevents scrolling while drawing */
+      touch-action: none;
+      cursor: crosshair;
     }
     
+    /* --- COLOR PALETTE --- */
+    .color-palette {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 15px 10px;
+      background: #fff;
+      overflow-x: auto;
+    }
+    .color-swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .color-swatch.active {
+      transform: scale(1.2);
+      border-color: #333;
+      box-shadow: 0 0 0 3px #fff, 0 0 0 6px #333;
+    }
+
     .controls {
       display: flex;
       justify-content: center;
-      gap: 15px;
-      padding: 20px;
+      gap: 25px;
+      padding: 10px 20px 25px;
       background: #fff;
       box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
     }
     .ctrl-btn {
       border: none;
       border-radius: 50%;
-      width: 65px;
-      height: 65px;
-      font-size: 1.8rem;
+      width: 70px;
+      height: 70px;
+      font-size: 2rem;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
-      transition: transform 0.1s;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .ctrl-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.1); }
+    .ctrl-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.15); }
     .btn-clear { background: #ffeaa7; color: #d63031; }
     .btn-speak { background: #74b9ff; color: #fff; }
     .btn-next { background: #55efc4; color: #00b894; }
 
-    /* Confetti */
-    .confetti {
-      position: fixed;
-      font-size: 1.5rem;
+    /* Start indicator animation */
+    .start-dot {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #00b894;
+      border-radius: 50%;
+      box-shadow: 0 0 0 rgba(0, 184, 148, 0.4);
+      animation: pulse 1.5s infinite;
       pointer-events: none;
-      z-index: 9999;
-      animation: fall 2s linear forwards;
+      z-index: 5;
+      display: none;
     }
-    @keyframes fall {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); }
     }
+
   </style>
 </head>
 <body>
 
   <!-- 1. HOME SCREEN -->
   <div id="homeScreen" class="screen active">
-    <h1 class="title">Magic Writing ✍️</h1>
+    <h1 class="title">Magic<br>Tracing</h1>
     <div class="category-grid">
-      <button class="cat-btn btn-abc" onclick="openCategory('abc')">A B C</button>
-      <button class="cat-btn btn-123" onclick="openCategory('num')">1 2 3</button>
-      <button class="cat-btn btn-arabic" onclick="openCategory('ar')">ا ب ت</button>
+      <button class="cat-btn btn-abc" onclick="openCategory('abc')"><span>A B C</span></button>
+      <button class="cat-btn btn-123" onclick="openCategory('num')"><span>1 2 3</span></button>
+      <button class="cat-btn btn-arabic" onclick="openCategory('ar')"><span>ا ب ت</span></button>
+      <button class="cat-btn btn-shapes" onclick="openCategory('shapes')"><span>🔺 ⚪</span></button>
     </div>
   </div>
 
@@ -246,6 +272,7 @@
     <div class="header">
       <button class="back-btn" onclick="goHome()">⬅ वापस</button>
       <div class="header-title" id="selectTitle">Letters</div>
+      <div style="width: 80px;"></div> <!-- Spacer -->
     </div>
     <div class="letter-grid" id="letterGrid">
       <!-- Letters injected here -->
@@ -257,17 +284,29 @@
     <div class="draw-header">
       <button class="back-btn" onclick="goBackToSelect()">⬅ वापस</button>
       <div class="draw-title" id="currentLetterTitle">A</div>
-      <div style="width: 70px;"></div> <!-- Spacer -->
+      <div style="width: 80px;"></div>
     </div>
     
     <div class="canvas-container">
+      <div id="startDot" class="start-dot"></div>
       <canvas id="drawCanvas"></canvas>
     </div>
 
+    <!-- Color Palette -->
+    <div class="color-palette">
+      <div class="color-swatch active" style="background:#FF7675;" onclick="setColor('#FF7675', this)"></div>
+      <div class="color-swatch" style="background:#0984e3;" onclick="setColor('#0984e3', this)"></div>
+      <div class="color-swatch" style="background:#00b894;" onclick="setColor('#00b894', this)"></div>
+      <div class="color-swatch" style="background:#fdcb6e;" onclick="setColor('#fdcb6e', this)"></div>
+      <div class="color-swatch" style="background:#e84393;" onclick="setColor('#e84393', this)"></div>
+      <div class="color-swatch" style="background:#a29bfe;" onclick="setColor('#a29bfe', this)"></div>
+      <div class="color-swatch" style="background:#636e72;" onclick="setColor('#636e72', this)"></div>
+    </div>
+
     <div class="controls">
-      <button class="ctrl-btn btn-clear" onclick="clearCanvas()" title="मिटाएं">🧽</button>
-      <button class="ctrl-btn btn-speak" onclick="speakCurrent()" title="सुनें">🔊</button>
-      <button class="ctrl-btn btn-next" onclick="nextLetter()" title="अगला">➡️</button>
+      <button class="ctrl-btn btn-clear" onclick="clearCanvas()">🧽</button>
+      <button class="ctrl-btn btn-speak" onclick="speakCurrent()">🔊</button>
+      <button class="ctrl-btn btn-next" onclick="nextLetter()">➡️</button>
     </div>
   </div>
 
@@ -278,23 +317,28 @@
     const DATA = {
       abc: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
       num: '1234567890'.split(''),
-      ar: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'و', 'ه', 'ي']
+      ar: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'و', 'ه', 'ي'],
+      shapes: ['Circle', 'Square', 'Triangle', 'Star', 'Heart']
     };
 
     const SPEECH_TEXT = {
-      ar: { 'ا': 'Alif', 'ب': 'Baa', 'ت': 'Taa', 'ث': 'Thaa', 'ج': 'Jeem', 'ح': 'Haa', 'خ': 'Khaa', 'د': 'Daal', 'ذ': 'Dhaal', 'ر': 'Raa', 'ز': 'Zaa', 'س': 'Seen', 'ش': 'Sheen', 'ص': 'Saad', 'ض': 'Daad', 'ط': 'Taa', 'ظ': 'Zaa', 'ع': 'Ain', 'غ': 'Ghain', 'ف': 'Faa', 'ق': 'Qaaf', 'ك': 'Kaaf', 'ل': 'Laam', 'م': 'Meem', 'ن': 'Noon', 'و': 'Waw', 'ه': 'Haa', 'ي': 'Yaa' }
+      ar: { 'ا': 'Alif', 'ب': 'Baa', 'ت': 'Taa', 'ث': 'Thaa', 'ج': 'Jeem', 'ح': 'Haa', 'خ': 'Khaa', 'د': 'Daal', 'ذ': 'Dhaal', 'ر': 'Raa', 'ز': 'Zaa', 'س': 'Seen', 'ش': 'Sheen', 'ص': 'Saad', 'ض': 'Daad', 'ط': 'Taa', 'ظ': 'Zaa', 'ع': 'Ain', 'غ': 'Ghain', 'ف': 'Faa', 'ق': 'Qaaf', 'ك': 'Kaaf', 'ل': 'Laam', 'م': 'Meem', 'ن': 'Noon', 'و': 'Waw', 'ه': 'Haa', 'ي': 'Yaa' },
+      shapes: { 'Circle': 'Circle', 'Square': 'Square', 'Triangle': 'Triangle', 'Star': 'Star', 'Heart': 'Heart' }
     };
 
     let currentCategory = '';
     let currentIndex = 0;
+    let currentColor = '#FF7675'; // Default pink/red
     
     // Canvas variables
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
+    const startDot = document.getElementById('startDot');
     let isDrawing = false;
     let lastX = 0;
     let lastY = 0;
     let canvasWidth, canvasHeight;
+    let dpr = window.devicePixelRatio || 1;
 
     /* =========================================================
        2. AUDIO SYNTHESIS
@@ -319,6 +363,7 @@
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
+      startDot.style.display = 'none'; // hide dot by default
     }
 
     function goHome() {
@@ -334,6 +379,7 @@
       if (cat === 'abc') title = "A B C";
       if (cat === 'num') title = "1 2 3";
       if (cat === 'ar') title = "अलिफ़ बा ता";
+      if (cat === 'shapes') title = "आकार (Shapes)";
       
       document.getElementById('selectTitle').textContent = title;
 
@@ -341,9 +387,19 @@
         const btn = document.createElement('button');
         btn.className = 'letter-card';
         if (cat === 'ar') btn.classList.add('arabic-char');
-        btn.textContent = char;
         
-        // Add a small star badge if it's a number
+        // Show emoji for shapes in grid
+        if (cat === 'shapes') {
+           btn.classList.add('shape-char');
+           if(char === 'Circle') btn.textContent = '🔵';
+           if(char === 'Square') btn.textContent = '🟥';
+           if(char === 'Triangle') btn.textContent = '🔺';
+           if(char === 'Star') btn.textContent = '⭐';
+           if(char === 'Heart') btn.textContent = '❤️';
+        } else {
+           btn.textContent = char;
+        }
+        
         btn.onclick = () => openDrawScreen(index);
         grid.appendChild(btn);
       });
@@ -357,30 +413,37 @@
 
     function openDrawScreen(index) {
       currentIndex = index;
-      const letter = DATA[currentCategory][currentIndex];
-      document.getElementById('currentLetterTitle').textContent = letter;
+      const item = DATA[currentCategory][currentIndex];
+      
+      // Set title
+      if (currentCategory === 'shapes') {
+        document.getElementById('currentLetterTitle').textContent = item;
+      } else {
+        document.getElementById('currentLetterTitle').textContent = item;
+      }
       
       showScreen('drawScreen');
       
-      // Delay slightly to ensure canvas container is fully visible and sized
+      // Delay slightly to ensure canvas container is sized
       setTimeout(() => {
         resizeCanvas();
-        drawGuide(letter);
-        speakLetter(letter);
+        drawGuide(item);
+        speakItem(item);
       }, 100);
     }
 
-    function speakLetter(letter) {
+    function speakItem(item) {
       if (currentCategory === 'ar') {
-        speak(SPEECH_TEXT.ar[letter] || letter);
+        speak(SPEECH_TEXT.ar[item] || item);
+      } else if (currentCategory === 'shapes') {
+        speak(SPEECH_TEXT.shapes[item] || item);
       } else {
-        speak(letter);
+        speak(item);
       }
     }
 
     function speakCurrent() {
-      const letter = DATA[currentCategory][currentIndex];
-      speakLetter(letter);
+      speakItem(DATA[currentCategory][currentIndex]);
     }
 
     function nextLetter() {
@@ -388,81 +451,162 @@
       if (currentIndex >= DATA[currentCategory].length) {
         currentIndex = 0; // Loop back
       }
-      const letter = DATA[currentCategory][currentIndex];
-      document.getElementById('currentLetterTitle').textContent = letter;
+      const item = DATA[currentCategory][currentIndex];
+      
+      if (currentCategory === 'shapes') {
+        document.getElementById('currentLetterTitle').textContent = item;
+      } else {
+        document.getElementById('currentLetterTitle').textContent = item;
+      }
       
       clearCanvas();
-      drawGuide(letter);
-      speakLetter(letter);
+      drawGuide(item);
+      speakItem(item);
       
-      // Little celebration
       createConfetti();
     }
 
     /* =========================================================
-       4. CANVAS DRAWING & TRACING
+       4. COLOR SELECTION
+       ========================================================= */
+    function setColor(color, swatchEl) {
+      currentColor = color;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      
+      // Update active swatch UI
+      document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
+      swatchEl.classList.add('active');
+      
+      // Animate the swatch
+      swatchEl.style.transform = "scale(1.4)";
+      setTimeout(() => swatchEl.style.transform = "scale(1.2)", 150);
+    }
+
+    /* =========================================================
+       5. CANVAS DRAWING & TRACING
        ========================================================= */
     function resizeCanvas() {
       const container = canvas.parentElement;
       const rect = container.getBoundingClientRect();
       
-      // Handle high-DPI screens for sharpness
-      const dpr = window.devicePixelRatio || 1;
+      dpr = window.devicePixelRatio || 1;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       
-      canvasWidth = canvas.width;
-      canvasHeight = canvas.height;
+      canvasWidth = rect.width;
+      canvasHeight = rect.height;
       
-      // Scale context to match CSS pixels
       ctx.scale(dpr, dpr);
-      
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.lineWidth = 25;
-      ctx.strokeStyle = '#FF7675'; // Cute pink/red for drawing
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = currentColor;
     }
 
-    function drawGuide(letter) {
+    function drawShapePath(shape, cx, cy, size) {
+      ctx.beginPath();
+      if (shape === 'Circle') {
+        ctx.arc(cx, cy, size, 0, Math.PI * 2);
+      } else if (shape === 'Square') {
+        ctx.rect(cx - size, cy - size, size * 2, size * 2);
+      } else if (shape === 'Triangle') {
+        ctx.moveTo(cx, cy - size);
+        ctx.lineTo(cx + size, cy + size);
+        ctx.lineTo(cx - size, cy + size);
+        ctx.closePath();
+      } else if (shape === 'Star') {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / 5;
+        let outerR = size;
+        let innerR = size / 2;
+        ctx.moveTo(cx, cy - outerR);
+        for (let i = 0; i < 5; i++) {
+          x = cx + Math.cos(rot) * outerR;
+          y = cy + Math.sin(rot) * outerR;
+          ctx.lineTo(x, y);
+          rot += step;
+          x = cx + Math.cos(rot) * innerR;
+          y = cy + Math.sin(rot) * innerR;
+          ctx.lineTo(x, y);
+          rot += step;
+        }
+        ctx.closePath();
+      } else if (shape === 'Heart') {
+        let topCurveHeight = size * 0.3;
+        ctx.moveTo(cx, cy + topCurveHeight);
+        // left curve
+        ctx.bezierCurveTo(cx, cy, cx - size / 2, cy, cx - size, cy + topCurveHeight);
+        // right curve
+        ctx.bezierCurveTo(cx - size, cy + (size + topCurveHeight) / 2, cx, cy + (size + topCurveHeight) / 2, cx, cy + size);
+        // right curve
+        ctx.bezierCurveTo(cx, cy + (size + topCurveHeight) / 2, cx + size, cy + (size + topCurveHeight) / 2, cx + size, cy + topCurveHeight);
+        // left curve
+        ctx.bezierCurveTo(cx + size / 2, cy, cx, cy, cx, cy + topCurveHeight);
+      }
+      ctx.stroke();
+    }
+
+    function drawGuide(item) {
       clearCanvas();
       
-      // Setup guide style
       ctx.save();
-      ctx.strokeStyle = '#b2bec3'; // Gray guide
-      ctx.lineWidth = 6;
-      ctx.setLineDash([15, 15]); // Dotted line
       
-      // Font setup based on category
-      let fontSize = Math.min(canvasWidth, canvasHeight) * 0.6;
-      if (currentCategory === 'ar') {
-        ctx.font = `bold ${fontSize}px "Amiri", "Traditional Arabic", serif`;
+      // Draw thick, light, solid guide (No Dots)
+      ctx.strokeStyle = '#dfe6e9'; 
+      ctx.lineWidth = 45;
+      
+      const centerX = canvasWidth / 2;
+      const centerY = canvasHeight / 2;
+      
+      if (currentCategory === 'shapes') {
+        const size = Math.min(canvasWidth, canvasHeight) * 0.3;
+        drawShapePath(item, centerX, centerY, size);
+        
+        // Show start dot at top center
+        if(item === 'Circle' || item === 'Triangle' || item === 'Star') {
+            showStartDot(centerX, centerY - size);
+        } else if(item === 'Square') {
+            showStartDot(centerX - size, centerY - size);
+        } else if(item === 'Heart') {
+            showStartDot(centerX, centerY - size*0.3);
+        }
+        
       } else {
-        ctx.font = `900 ${fontSize}px "Baloo 2", "Arial", sans-serif`;
+        let fontSize = Math.min(canvasWidth, canvasHeight) * 0.6;
+        if (currentCategory === 'ar') {
+          ctx.font = `bold ${fontSize}px "Amiri", "Traditional Arabic", serif`;
+        } else {
+          ctx.font = `900 ${fontSize}px "Baloo 2", "Arial", sans-serif`;
+        }
+        
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        // Draw the letter shape
+        ctx.strokeText(item, centerX, centerY);
+        
+        // Show start dot at top left of the letter roughly
+        showStartDot(centerX - fontSize*0.35, centerY - fontSize*0.4);
       }
-      
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      
-      // Draw text in center
-      ctx.strokeText(letter, canvasWidth / (2 * (window.devicePixelRatio || 1)), canvasHeight / (2 * (window.devicePixelRatio || 1)));
-      
-      // Add a solid faded version behind for easier tracing
-      ctx.setLineDash([]);
-      ctx.strokeStyle = 'rgba(178, 190, 195, 0.2)';
-      ctx.lineWidth = fontSize * 0.8;
-      ctx.strokeText(letter, canvasWidth / (2 * (window.devicePixelRatio || 1)), canvasHeight / (2 * (window.devicePixelRatio || 1)));
       
       ctx.restore();
 
       // Reset for user drawing
-      ctx.strokeStyle = '#FF7675';
-      ctx.lineWidth = 25;
-      ctx.setLineDash([]);
+      ctx.strokeStyle = currentColor;
+      ctx.lineWidth = 20;
+    }
+
+    function showStartDot(x, y) {
+      startDot.style.display = 'block';
+      startDot.style.left = (x - 10) + 'px'; // 10 is half of width
+      startDot.style.top = (y - 10) + 'px';
     }
 
     function clearCanvas() {
-      const dpr = window.devicePixelRatio || 1;
-      ctx.clearRect(0, 0, canvasWidth / dpr, canvasHeight / dpr);
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
     // --- Drawing Events ---
@@ -478,10 +622,7 @@
         clientY = e.clientY;
       }
       
-      return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
-      };
+      return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
     function startDrawing(e) {
@@ -491,11 +632,13 @@
       lastX = pos.x;
       lastY = pos.y;
       
-      // Draw a dot on tap
       ctx.beginPath();
-      ctx.arc(lastX, lastY, 12, 0, Math.PI * 2);
-      ctx.fillStyle = '#FF7675';
+      ctx.arc(lastX, lastY, 10, 0, Math.PI * 2);
+      ctx.fillStyle = currentColor;
       ctx.fill();
+      
+      // Hide start dot once they begin drawing
+      startDot.style.display = 'none';
     }
 
     function draw(e) {
@@ -503,16 +646,12 @@
       e.preventDefault();
       
       const pos = getCoordinates(e);
-      
       ctx.beginPath();
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
       
-      // Add sparkle effect to drawing
-      if (Math.random() > 0.8) {
-        createSparkle(pos.x, pos.y);
-      }
+      if (Math.random() > 0.85) createSparkle(pos.x, pos.y);
       
       lastX = pos.x;
       lastY = pos.y;
@@ -520,26 +659,22 @@
 
     function stopDrawing(e) {
       if (e) e.preventDefault();
-      if (isDrawing) {
-        isDrawing = false;
-        // Maybe do something on finish?
-      }
+      isDrawing = false;
     }
 
-    // Mouse events
+    // Attach Events
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
 
-    // Touch events (Mobile)
     canvas.addEventListener('touchstart', startDrawing, { passive: false });
     canvas.addEventListener('touchmove', draw, { passive: false });
     canvas.addEventListener('touchend', stopDrawing, { passive: false });
     canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
 
     /* =========================================================
-       5. VISUAL EFFECTS
+       6. VISUAL EFFECTS
        ========================================================= */
     function createSparkle(x, y) {
       const sparkle = document.createElement('div');
@@ -547,13 +682,13 @@
       sparkle.style.position = 'absolute';
       sparkle.style.left = (x + canvas.getBoundingClientRect().left) + 'px';
       sparkle.style.top = (y + canvas.getBoundingClientRect().top) + 'px';
-      sparkle.style.fontSize = '1.5rem';
+      sparkle.style.fontSize = '1.2rem';
       sparkle.style.pointerEvents = 'none';
-      sparkle.style.transition = 'all 0.5s';
+      sparkle.style.transition = 'all 0.5s ease-out';
       document.body.appendChild(sparkle);
 
       setTimeout(() => {
-        sparkle.style.transform = 'translateY(-30px) scale(0)';
+        sparkle.style.transform = 'translateY(-20px) scale(0) rotate(45deg)';
         sparkle.style.opacity = '0';
       }, 10);
 
@@ -561,34 +696,42 @@
     }
 
     function createConfetti() {
-      const colors = ['#ff7675', '#74b9ff', '#ffeaa7', '#55efc4', '#a29bfe'];
-      for (let i = 0; i < 10; i++) {
+      const icons = ['⭐', '🌟', '✨', '🎈'];
+      for (let i = 0; i < 15; i++) {
         const c = document.createElement('div');
-        c.className = 'confetti';
-        c.textContent = ['⭐', '🌟', '✨', '🎈'][Math.floor(Math.random() * 4)];
+        c.textContent = icons[Math.floor(Math.random() * icons.length)];
+        c.style.position = 'fixed';
         c.style.left = Math.random() * 100 + 'vw';
         c.style.top = '-20px';
-        c.style.animationDuration = (Math.random() * 1 + 1) + 's';
-        c.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        c.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        c.style.zIndex = '9999';
+        c.style.pointerEvents = 'none';
+        
         document.body.appendChild(c);
-        setTimeout(() => c.remove(), 2500);
+        
+        const dur = Math.random() * 1.5 + 1;
+        c.style.transition = `transform ${dur}s linear, opacity ${dur}s`;
+        
+        setTimeout(() => {
+          c.style.transform = `translateY(${window.innerHeight}px) rotate(${Math.random()*360}deg)`;
+          c.style.opacity = '0';
+        }, 10);
+
+        setTimeout(() => c.remove(), dur * 1000);
       }
     }
 
-    // Handle window resize
+    // Handle resize
     window.addEventListener('resize', () => {
       if (document.getElementById('drawScreen').classList.contains('active')) {
-        const letter = DATA[currentCategory][currentIndex];
         resizeCanvas();
-        drawGuide(letter);
+        drawGuide(DATA[currentCategory][currentIndex]);
       }
     });
 
-    // Init
     if ("speechSynthesis" in window) {
       speechSynthesis.getVoices();
     }
-
   </script>
 </body>
 </html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kids Magic Writing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f8ff;
+      --card: #ffffff;
+      --text: #2d3436;
+      --blue: #0984e3;
+      --green: #00b894;
+      --pink: #fd79a8;
+      --purple: #6c5ce7;
+      --orange: #e17055;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      color: var(--text);
+    }
+
+    /* --- SCREENS --- */
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      flex-direction: column;
+      animation: fadeIn 0.3s ease;
+    }
+    .screen.active {
+      display: flex;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* --- HOME SCREEN --- */
+    #homeScreen {
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 3rem;
+      color: #fff;
+      text-shadow: 2px 2px 0 #6c5ce7, 4px 4px 0 rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .category-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 350px;
+    }
+    .cat-btn {
+      border: none;
+      border-radius: 20px;
+      padding: 20px;
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.8rem;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .cat-btn:active { transform: translateY(8px); box-shadow: 0 0px 0 rgba(0,0,0,0.2); }
+    .btn-abc { background: linear-gradient(to bottom, #fd79a8, #e84393); }
+    .btn-123 { background: linear-gradient(to bottom, #74b9ff, #0984e3); }
+    .btn-arabic { background: linear-gradient(to bottom, #55efc4, #00b894); }
+
+    /* --- SELECTION SCREEN --- */
+    #selectScreen {
+      background: #f8f9fa;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+    .back-btn {
+      background: #dfe6e9;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      color: #2d3436;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .header-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.5rem;
+      margin-left: 15px;
+      color: #6c5ce7;
+    }
+    .letter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 12px;
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+      align-content: start;
+    }
+    .letter-card {
+      background: #fff;
+      border: 3px solid #dfe6e9;
+      border-radius: 15px;
+      aspect-ratio: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Baloo 2', cursive;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #2d3436;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #dfe6e9;
+      transition: transform 0.1s;
+    }
+    .letter-card:active { transform: scale(0.95); }
+    .letter-card.arabic-char {
+      font-family: 'Amiri', serif;
+      font-size: 2.8rem;
+    }
+
+    /* --- TRACING SCREEN --- */
+    #drawScreen {
+      background: #fff;
+      position: relative;
+    }
+    .draw-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+    .draw-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.8rem;
+      color: var(--purple);
+    }
+    
+    .canvas-container {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      background: #fafafa;
+      /* Dot grid background */
+      background-image: radial-gradient(#d1d8e0 2px, transparent 2px);
+      background-size: 40px 40px;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none; /* Prevents scrolling while drawing */
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+    }
+    .ctrl-btn {
+      border: none;
+      border-radius: 50%;
+      width: 65px;
+      height: 65px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+      transition: transform 0.1s;
+    }
+    .ctrl-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.1); }
+    .btn-clear { background: #ffeaa7; color: #d63031; }
+    .btn-speak { background: #74b9ff; color: #fff; }
+    .btn-next { background: #55efc4; color: #00b894; }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      font-size: 1.5rem;
+      pointer-events: none;
+      z-index: 9999;
+      animation: fall 2s linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. HOME SCREEN -->
+  <div id="homeScreen" class="screen active">
+    <h1 class="title">Magic Writing ✍️</h1>
+    <div class="category-grid">
+      <button class="cat-btn btn-abc" onclick="openCategory('abc')">A B C</button>
+      <button class="cat-btn btn-123" onclick="openCategory('num')">1 2 3</button>
+      <button class="cat-btn btn-arabic" onclick="openCategory('ar')">ا ب ت</button>
+    </div>
+  </div>
+
+  <!-- 2. LETTER SELECTION SCREEN -->
+  <div id="selectScreen" class="screen">
+    <div class="header">
+      <button class="back-btn" onclick="goHome()">⬅ वापस</button>
+      <div class="header-title" id="selectTitle">Letters</div>
+    </div>
+    <div class="letter-grid" id="letterGrid">
+      <!-- Letters injected here -->
+    </div>
+  </div>
+
+  <!-- 3. DRAWING SCREEN -->
+  <div id="drawScreen" class="screen">
+    <div class="draw-header">
+      <button class="back-btn" onclick="goBackToSelect()">⬅ वापस</button>
+      <div class="draw-title" id="currentLetterTitle">A</div>
+      <div style="width: 70px;"></div> <!-- Spacer -->
+    </div>
+    
+    <div class="canvas-container">
+      <canvas id="drawCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl-btn btn-clear" onclick="clearCanvas()" title="मिटाएं">🧽</button>
+      <button class="ctrl-btn btn-speak" onclick="speakCurrent()" title="सुनें">🔊</button>
+      <button class="ctrl-btn btn-next" onclick="nextLetter()" title="अगला">➡️</button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       1. DATA & STATE
+       ========================================================= */
+    const DATA = {
+      abc: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+      num: '1234567890'.split(''),
+      ar: ['ا', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'و', 'ه', 'ي']
+    };
+
+    const SPEECH_TEXT = {
+      ar: { 'ا': 'Alif', 'ب': 'Baa', 'ت': 'Taa', 'ث': 'Thaa', 'ج': 'Jeem', 'ح': 'Haa', 'خ': 'Khaa', 'د': 'Daal', 'ذ': 'Dhaal', 'ر': 'Raa', 'ز': 'Zaa', 'س': 'Seen', 'ش': 'Sheen', 'ص': 'Saad', 'ض': 'Daad', 'ط': 'Taa', 'ظ': 'Zaa', 'ع': 'Ain', 'غ': 'Ghain', 'ف': 'Faa', 'ق': 'Qaaf', 'ك': 'Kaaf', 'ل': 'Laam', 'م': 'Meem', 'ن': 'Noon', 'و': 'Waw', 'ه': 'Haa', 'ي': 'Yaa' }
+    };
+
+    let currentCategory = '';
+    let currentIndex = 0;
+    
+    // Canvas variables
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+    let canvasWidth, canvasHeight;
+
+    /* =========================================================
+       2. AUDIO SYNTHESIS
+       ========================================================= */
+    function speak(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'en-US';
+      utt.rate = 0.85;
+      
+      const voices = speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha')));
+      if (preferred) utt.voice = preferred;
+      
+      speechSynthesis.speak(utt);
+    }
+
+    /* =========================================================
+       3. NAVIGATION LOGIC
+       ========================================================= */
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function goHome() {
+      showScreen('homeScreen');
+    }
+
+    function openCategory(cat) {
+      currentCategory = cat;
+      const grid = document.getElementById('letterGrid');
+      grid.innerHTML = '';
+      
+      let title = "Letters";
+      if (cat === 'abc') title = "A B C";
+      if (cat === 'num') title = "1 2 3";
+      if (cat === 'ar') title = "अलिफ़ बा ता";
+      
+      document.getElementById('selectTitle').textContent = title;
+
+      DATA[cat].forEach((char, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'letter-card';
+        if (cat === 'ar') btn.classList.add('arabic-char');
+        btn.textContent = char;
+        
+        // Add a small star badge if it's a number
+        btn.onclick = () => openDrawScreen(index);
+        grid.appendChild(btn);
+      });
+
+      showScreen('selectScreen');
+    }
+
+    function goBackToSelect() {
+      openCategory(currentCategory);
+    }
+
+    function openDrawScreen(index) {
+      currentIndex = index;
+      const letter = DATA[currentCategory][currentIndex];
+      document.getElementById('currentLetterTitle').textContent = letter;
+      
+      showScreen('drawScreen');
+      
+      // Delay slightly to ensure canvas container is fully visible and sized
+      setTimeout(() => {
+        resizeCanvas();
+        drawGuide(letter);
+        speakLetter(letter);
+      }, 100);
+    }
+
+    function speakLetter(letter) {
+      if (currentCategory === 'ar') {
+        speak(SPEECH_TEXT.ar[letter] || letter);
+      } else {
+        speak(letter);
+      }
+    }
+
+    function speakCurrent() {
+      const letter = DATA[currentCategory][currentIndex];
+      speakLetter(letter);
+    }
+
+    function nextLetter() {
+      currentIndex++;
+      if (currentIndex >= DATA[currentCategory].length) {
+        currentIndex = 0; // Loop back
+      }
+      const letter = DATA[currentCategory][currentIndex];
+      document.getElementById('currentLetterTitle').textContent = letter;
+      
+      clearCanvas();
+      drawGuide(letter);
+      speakLetter(letter);
+      
+      // Little celebration
+      createConfetti();
+    }
+
+    /* =========================================================
+       4. CANVAS DRAWING & TRACING
+       ========================================================= */
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      const rect = container.getBoundingClientRect();
+      
+      // Handle high-DPI screens for sharpness
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      canvasWidth = canvas.width;
+      canvasHeight = canvas.height;
+      
+      // Scale context to match CSS pixels
+      ctx.scale(dpr, dpr);
+      
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 25;
+      ctx.strokeStyle = '#FF7675'; // Cute pink/red for drawing
+    }
+
+    function drawGuide(letter) {
+      clearCanvas();
+      
+      // Setup guide style
+      ctx.save();
+      ctx.strokeStyle = '#b2bec3'; // Gray guide
+      ctx.lineWidth = 6;
+      ctx.setLineDash([15, 15]); // Dotted line
+      
+      // Font setup based on category
+      let fontSize = Math.min(canvasWidth, canvasHeight) * 0.6;
+      if (currentCategory === 'ar') {
+        ctx.font = `bold ${fontSize}px "Amiri", "Traditional Arabic", serif`;
+      } else {
+        ctx.font = `900 ${fontSize}px "Baloo 2", "Arial", sans-serif`;
+      }
+      
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Draw text in center
+      ctx.strokeText(letter, canvasWidth / (2 * (window.devicePixelRatio || 1)), canvasHeight / (2 * (window.devicePixelRatio || 1)));
+      
+      // Add a solid faded version behind for easier tracing
+      ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(178, 190, 195, 0.2)';
+      ctx.lineWidth = fontSize * 0.8;
+      ctx.strokeText(letter, canvasWidth / (2 * (window.devicePixelRatio || 1)), canvasHeight / (2 * (window.devicePixelRatio || 1)));
+      
+      ctx.restore();
+
+      // Reset for user drawing
+      ctx.strokeStyle = '#FF7675';
+      ctx.lineWidth = 25;
+      ctx.setLineDash([]);
+    }
+
+    function clearCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      ctx.clearRect(0, 0, canvasWidth / dpr, canvasHeight / dpr);
+    }
+
+    // --- Drawing Events ---
+    function getCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+      
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      isDrawing = true;
+      const pos = getCoordinates(e);
+      lastX = pos.x;
+      lastY = pos.y;
+      
+      // Draw a dot on tap
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 12, 0, Math.PI * 2);
+      ctx.fillStyle = '#FF7675';
+      ctx.fill();
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      
+      const pos = getCoordinates(e);
+      
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      
+      // Add sparkle effect to drawing
+      if (Math.random() > 0.8) {
+        createSparkle(pos.x, pos.y);
+      }
+      
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function stopDrawing(e) {
+      if (e) e.preventDefault();
+      if (isDrawing) {
+        isDrawing = false;
+        // Maybe do something on finish?
+      }
+    }
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch events (Mobile)
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing, { passive: false });
+    canvas.addEventListener('touchcancel', stopDrawing, { passive: false });
+
+    /* =========================================================
+       5. VISUAL EFFECTS
+       ========================================================= */
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.textContent = '✨';
+      sparkle.style.position = 'absolute';
+      sparkle.style.left = (x + canvas.getBoundingClientRect().left) + 'px';
+      sparkle.style.top = (y + canvas.getBoundingClientRect().top) + 'px';
+      sparkle.style.fontSize = '1.5rem';
+      sparkle.style.pointerEvents = 'none';
+      sparkle.style.transition = 'all 0.5s';
+      document.body.appendChild(sparkle);
+
+      setTimeout(() => {
+        sparkle.style.transform = 'translateY(-30px) scale(0)';
+        sparkle.style.opacity = '0';
+      }, 10);
+
+      setTimeout(() => sparkle.remove(), 500);
+    }
+
+    function createConfetti() {
+      const colors = ['#ff7675', '#74b9ff', '#ffeaa7', '#55efc4', '#a29bfe'];
+      for (let i = 0; i < 10; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.textContent = ['⭐', '🌟', '✨', '🎈'][Math.floor(Math.random() * 4)];
+        c.style.left = Math.random() * 100 + 'vw';
+        c.style.top = '-20px';
+        c.style.animationDuration = (Math.random() * 1 + 1) + 's';
+        c.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 2500);
+      }
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (document.getElementById('drawScreen').classList.contains('active')) {
+        const letter = DATA[currentCategory][currentIndex];
+        resizeCanvas();
+        drawGuide(letter);
+      }
+    });
+
+    // Init
+    if ("speechSynthesis" in window) {
+      speechSynthesis.getVoices();
+    }
+
+  </script>
+</body>
+</html>
